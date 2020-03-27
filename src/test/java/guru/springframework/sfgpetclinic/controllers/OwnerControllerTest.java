@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.*;
 
 @ExtendWith({MockitoExtension.class})
 class OwnerControllerTest {
@@ -105,10 +106,12 @@ class OwnerControllerTest {
 
         Owner owner = new Owner(1L,"atena","Kalaki");
 
-        String viewName =  ownerController.processFindForm(owner,bindingResult,null);
+        String viewName =  ownerController.processFindForm(owner,bindingResult,model);
 
         assertEquals(stringArgumentCaptor.getValue(),"%Kalaki%");
         assertEquals("redirect:/owners/1",viewName);
+
+        verifyZeroInteractions(model);
     }
 
     @Test
@@ -118,8 +121,10 @@ class OwnerControllerTest {
 
         String viewName =  ownerController.processFindForm(owner,bindingResult,null);
 
+        verifyNoMoreInteractions(ownerService);
         assertEquals(stringArgumentCaptor.getValue(),"%DontFindMe%");
         assertEquals("owners/findOwners",viewName);
+        verifyZeroInteractions(model);
     }
 
 
@@ -135,7 +140,8 @@ class OwnerControllerTest {
         assertEquals("owners/ownersList",viewName);
 
         inOrder.verify(ownerService).findAllByLastNameLike(anyString());
-        inOrder.verify(model).addAttribute(anyString(),anyList());
+        inOrder.verify(model,times(1)).addAttribute(anyString(),anyList());
+        verifyNoMoreInteractions(model);
 
     }
 }

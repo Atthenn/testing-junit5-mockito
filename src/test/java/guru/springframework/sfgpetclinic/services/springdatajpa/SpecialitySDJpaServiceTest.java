@@ -71,7 +71,7 @@ class SpecialitySDJpaServiceTest {
 
         //then
         assertThat(foundSpeciality).isNotNull();
-        then(specialtyRepository).should(times(1)).findById(anyLong());
+        then(specialtyRepository).should(timeout(100)).findById(anyLong());
         then(specialtyRepository).shouldHaveNoMoreInteractions();
     }
     @Test
@@ -90,7 +90,7 @@ class SpecialitySDJpaServiceTest {
         service.deleteById(1l);
         service.deleteById(1l);
         //then
-        then(specialtyRepository).should(times(2)).deleteById(1l);
+        then(specialtyRepository).should(timeout(200).times(2)).deleteById(1l);
     }
 
     @Test
